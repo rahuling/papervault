@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, name: linux-x86_64, binary: papervault, archive: tar.gz }
+          - { os: macos-latest, name: macos-arm64, binary: papervault, archive: tar.gz }
+          - { os: macos-13, name: macos-x86_64, binary: papervault, archive: tar.gz }
+          - { os: windows-latest, name: windows-x86_64, binary: papervault.exe, archive: zip }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run tests
+        run: cargo test --all-targets
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p dist/papervault
+          cp target/release/${{ matrix.binary }} dist/papervault/
+          cp README.md LICENSE dist/papervault/
+          cp -r skills dist/papervault/
+          cd dist
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a ../papervault-${{ matrix.name }}.zip papervault >/dev/null
+          else
+            tar -czf ../papervault-${{ matrix.name }}.tar.gz papervault
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: papervault-${{ matrix.name }}
+          path: papervault-${{ matrix.name }}.*
+          if-no-files-found: error

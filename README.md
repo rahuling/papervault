@@ -1,6 +1,13 @@
-# PaperVault
+<p align="center">
+  <img src="brand/papervault-logo.svg" alt="PaperVault" width="330">
+</p>
 
-**Private PDF tools that run entirely on your computer.**
+<h3 align="center">Private PDF tools that run entirely on your computer.</h3>
+
+<p align="center">
+  <img src="docs/screenshots/app-home.png" alt="PaperVault home screen" width="860">
+</p>
+
 
 PaperVault merges, splits, rotates, compresses, watermarks and converts PDFs. It has a simple browser UI and a command line for scripts and AI assistants. Your files are never uploaded: PaperVault has no network code, no accounts and no analytics.
 
@@ -17,6 +24,10 @@ Website: https://rahuling.github.io/papervault/
 | Inspect | PDF info (pages, metadata) |
 
 Not in this release: password protection (protect and unlock), OCR, PDF to Word/Excel, Office to PDF, e-signatures, redaction and PDF/A. Encryption is planned next.
+
+## Contribute
+
+PaperVault is open source and welcomes help: code, testing on macOS or Linux, design, and bug reports from real PDFs. Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Install
 

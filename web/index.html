@@ -4,181 +4,341 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PaperVault</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231E7A62'/%3E%3Cpath d='M18 12h22l6 6v34H18z' fill='%23F7F5F0'/%3E%3Cpath d='M40 12v6h6z' fill='%23CFE3DB'/%3E%3Ccircle cx='32' cy='32' r='4.5' fill='%231E7A62'/%3E%3Crect x='30.5' y='35' width='3' height='9' rx='1.5' fill='%231E7A62'/%3E%3C/svg%3E">
 <style>
+  /* System fonts and inline icons only: the app makes no network requests. */
   :root {
-    --bg: #f6f7f9; --card: #ffffff; --ink: #1d232b; --muted: #5d6875;
-    --line: #e2e6ec; --accent: #2f6fed; --accent-ink: #ffffff;
-    --danger: #c42b2b; --ok: #1f8a4c; --radius: 14px;
+    --bg: #F3F4F6; --panel: #FFFFFF; --side: #FAFAFB; --ink: #1B1F24; --muted: #5F6A76; --faint: #8A94A0;
+    --line: #E2E5EA; --line-strong: #C8CED6; --accent: #1E7A62; --accent-ink: #FFFFFF; --accent-soft: #E7F3EF;
+    --danger: #B42318; --focus: #2563EB; --shadow: 0 1px 2px rgb(16 24 40 / 6%);
+    --sans: "Segoe UI Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #13171c; --card: #1c2229; --ink: #e8ecf1; --muted: #9aa5b1;
-      --line: #2b333d; --accent: #5b8cff; --accent-ink: #0b1220;
-      --danger: #ff6b6b; --ok: #4cc38a;
+      --bg: #101316; --panel: #171B1F; --side: #13171B; --ink: #E9ECEF; --muted: #9AA4AE; --faint: #6B7580;
+      --line: #262C33; --line-strong: #3A424B; --accent: #2FA384; --accent-ink: #0B1210; --accent-soft: #15302A;
+      --danger: #FF8A80; --focus: #60A5FA;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #13171c; --card: #1c2229; --ink: #e8ecf1; --muted: #9aa5b1;
-    --line: #2b333d; --accent: #5b8cff; --accent-ink: #0b1220;
-    --danger: #ff6b6b; --ok: #4cc38a;
+    --bg: #101316; --panel: #171B1F; --side: #13171B; --ink: #E9ECEF; --muted: #9AA4AE; --faint: #6B7580;
+    --line: #262C33; --line-strong: #3A424B; --accent: #2FA384; --accent-ink: #0B1210; --accent-soft: #15302A;
+    --danger: #FF8A80; --focus: #60A5FA;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-  header {
-    display: flex; align-items: center; gap: 12px; padding: 16px 20px;
-    border-bottom: 1px solid var(--line); background: var(--card);
-  }
-  header a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; }
-  header .spacer { flex: 1; }
-  .privacy { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 6px; }
-  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 56px; }
-  h1 { font-size: 26px; margin: 8px 0 4px; }
-  .lead { color: var(--muted); margin: 0 0 24px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
-  .tile {
-    display: block; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 18px; color: inherit; text-decoration: none; transition: border-color .15s, transform .15s;
-  }
-  .tile:hover, .tile:focus-visible { border-color: var(--accent); transform: translateY(-1px); outline: none; }
-  .tile .icon { font-size: 26px; margin-bottom: 8px; }
-  .tile h2 { font-size: 17px; margin: 0 0 4px; }
-  .tile p { margin: 0; color: var(--muted); font-size: 14px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
-  .back { display: inline-block; margin-bottom: 14px; color: var(--accent); text-decoration: none; font-weight: 600; }
-  .drop {
-    border: 2px dashed var(--line); border-radius: var(--radius); padding: 28px 16px; text-align: center;
-    cursor: pointer; color: var(--muted); transition: border-color .15s, background .15s;
-  }
-  .drop.over, .drop:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
-  .drop strong { color: var(--ink); display: block; font-size: 17px; margin-bottom: 4px; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  svg.i { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Shell: toolbar on top, sidebar left, workspace right, status bar at the bottom */
+  .app { height: 100vh; min-height: 560px; display: grid; grid-template-rows: 52px 1fr 28px; grid-template-columns: 252px 1fr; grid-template-areas: "top top" "side main" "status status"; }
+  .top { grid-area: top; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+  .brand em { font-style: normal; font-family: var(--serif); font-weight: 400; }
+  .crumb { color: var(--faint); font-size: 13px; padding-left: 14px; border-left: 1px solid var(--line); }
+  .crumb strong { color: var(--ink); font-weight: 600; }
+  .spacer { flex: 1; }
+  .local { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+
+  .side { grid-area: side; background: var(--side); border-right: 1px solid var(--line); overflow-y: auto; padding: 12px 10px 20px; }
+  .search { display: flex; align-items: center; gap: 8px; margin: 2px 4px 14px; padding: 0 10px; height: 32px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--faint); }
+  .search input { border: 0; background: transparent; width: 100%; outline: none; font-size: 13px; }
+  .section-label { margin: 16px 10px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+  .nav { display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; text-decoration: none; font-size: 13.5px; }
+  .nav svg.i { color: var(--muted); }
+  .nav:hover { background: rgb(0 0 0 / 4%); }
+  .nav[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .nav[aria-current="page"] svg.i { color: var(--accent); }
+  .nav[hidden] { display: none; }
+
+  .main { grid-area: main; overflow-y: auto; padding: 28px 32px 40px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .title { margin: 0 0 4px; font: 400 26px/1.2 var(--serif); letter-spacing: -.01em; }
+  .sub { margin: 0 0 22px; color: var(--muted); font-size: 14px; }
+
+  /* Home */
+  .hero { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .hero .i-big { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .hero h2 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
+  .hero p { margin: 0; color: var(--muted); font-size: 13px; }
+  .cat { margin-bottom: 26px; }
+  .cat h3 { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--faint); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .card { display: flex; gap: 12px; align-items: flex-start; padding: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; color: inherit; text-decoration: none; box-shadow: var(--shadow); transition: border-color .12s, transform .12s; }
+  .card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+  .card .ic { width: 34px; height: 34px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex-shrink: 0; }
+  .card h4 { margin: 1px 0 2px; font-size: 14px; font-weight: 600; }
+  .card p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+  .card .badge { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--muted); border: 1px solid var(--line-strong); border-radius: 999px; padding: 1px 8px; }
+  .empty { color: var(--muted); padding: 30px 0; text-align: center; }
+
+  /* Tool workspace */
+  .steps { display: flex; gap: 0; margin: 0 0 22px; font-size: 12.5px; color: var(--faint); }
+  .steps li { list-style: none; display: flex; align-items: center; gap: 8px; }
+  .steps li + li::before { content: ""; width: 28px; height: 1px; background: var(--line-strong); margin: 0 10px; }
+  .steps .n { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-strong); font-size: 11px; font-weight: 700; }
+  .steps .done .n, .steps .now .n { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .steps .now { color: var(--ink); font-weight: 600; }
+  ul.steps { padding: 0; margin: 0 0 22px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+  .panel-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 13px; }
+  .panel-h small { color: var(--muted); font-weight: 400; }
+  .panel-b { padding: 16px; }
+
+  .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; min-height: 170px; margin: 16px; border: 1.5px dashed var(--line-strong); border-radius: 10px; background: var(--side); cursor: pointer; color: var(--muted); transition: border-color .12s, background .12s; }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .drop .i-big { width: 44px; height: 44px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); display: grid; place-items: center; color: var(--accent); margin-bottom: 4px; }
+  .drop strong { color: var(--ink); font-size: 14px; }
   .drop input { display: none; }
-  .files { margin: 12px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
-  .files li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--line); }
-  .files button { background: none; border: 0; color: var(--danger); cursor: pointer; font-size: 14px; }
-  .fields { display: grid; gap: 14px; margin-top: 18px; }
-  .fields label { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
-  .fields small { font-weight: 400; color: var(--muted); }
-  input[type=text], input[type=number], input[type=password], select {
-    font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line);
-    background: var(--bg); color: var(--ink); width: 100%;
-  }
-  .actions { margin-top: 22px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  button.primary, a.button {
-    font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 12px 22px; cursor: pointer;
-    background: var(--accent); color: var(--accent-ink); text-decoration: none; display: inline-block;
-  }
-  button.primary:disabled { opacity: .5; cursor: default; }
-  .status { font-size: 15px; }
+  table.files { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.files th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; padding: 8px 16px; border-top: 1px solid var(--line); }
+  table.files td { padding: 10px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
+  table.files td.num { color: var(--muted); text-align: right; white-space: nowrap; }
+  table.files .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  table.files .nm span { overflow-wrap: anywhere; }
+  table.files .nm svg.i { color: var(--danger); width: 16px; height: 16px; }
+  .rm { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 6px; display: grid; place-items: center; }
+  .rm:hover { color: var(--danger); background: rgb(180 35 24 / 8%); }
+
+  .field { display: grid; gap: 6px; margin-bottom: 14px; }
+  .field > span { font-size: 12.5px; font-weight: 600; }
+  .field small { color: var(--muted); font-size: 12px; }
+  input[type=text], input[type=number], input[type=password], select { width: 100%; height: 34px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--line-strong); background: var(--panel); outline: none; }
+  input:focus, select:focus { border-color: var(--focus); box-shadow: 0 0 0 3px rgb(37 99 235 / 15%); }
+
+  .run { margin-top: 6px; }
+  button.primary, a.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 38px; border: 0; border-radius: 8px; padding: 0 16px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; }
+  button.primary:hover:not(:disabled), a.btn:hover { filter: brightness(1.06); }
+  button.primary:disabled { background: var(--line-strong); color: var(--muted); cursor: default; }
+  a.btn.ghost { background: var(--panel); color: var(--ink); border: 1px solid var(--line-strong); }
+  .status { margin-top: 12px; font-size: 13px; min-height: 18px; color: var(--muted); }
   .status.err { color: var(--danger); }
-  .status.ok { color: var(--ok); }
-  pre.preview {
-    margin: 16px 0 0; padding: 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
-    white-space: pre-wrap; max-height: 320px; overflow: auto; font-size: 14px;
+  .result { margin-top: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-soft); display: grid; gap: 10px; }
+  .result .ok { display: flex; gap: 8px; align-items: center; font-weight: 600; color: var(--accent); font-size: 13px; }
+  .result .fname { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+  pre.preview { margin: 14px 0 0; padding: 14px; background: var(--side); border: 1px solid var(--line); border-radius: 8px; white-space: pre-wrap; max-height: 320px; overflow: auto; font: 12.5px/1.5 ui-monospace, Consolas, monospace; }
+
+  .statusbar { grid-area: status; display: flex; align-items: center; gap: 14px; padding: 0 14px; background: var(--panel); border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+  .statusbar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .statusbar .spacer { flex: 1; }
+
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: 52px auto 1fr 28px; grid-template-areas: "top" "side" "main" "status"; height: auto; min-height: 100vh; }
+    .side { border-right: 0; border-bottom: 1px solid var(--line); max-height: 260px; }
+    .main { overflow: visible; padding: 20px 16px 32px; }
+    .grid2 { grid-template-columns: 1fr; }
+    .crumb, .local span { display: none; }
   }
-  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px; }
-  @media (max-width: 480px) { header .privacy span { display: none; } }
 </style>
 </head>
 <body>
-<header>
-  <a href="#" aria-label="PaperVault home">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><rect x="8" y="13" width="8" height="5" rx="1"/><path d="M10 13v-2a2 2 0 0 1 4 0v2"/></svg>
-    PaperVault
-  </a>
-  <div class="spacer"></div>
-  <div class="privacy" title="Files are processed on this computer and never uploaded">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-    <span>Files stay on this computer</span>
-  </div>
-</header>
+<div class="app">
+  <header class="top">
+    <a class="brand" href="#" aria-label="PaperVault home">
+      <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1E7A62"/><path d="M18 12h22l6 6v34H18z" fill="#F7F5F0"/><path d="M40 12v6h6z" fill="#CFE3DB"/><circle cx="32" cy="32" r="4.5" fill="#1E7A62"/><rect x="30.5" y="35" width="3" height="9" rx="1.5" fill="#1E7A62"/></svg>
+      <span>Paper<em>Vault</em></span>
+    </a>
+    <div class="crumb" id="crumb">All tools</div>
+    <div class="spacer"></div>
+    <div class="local" title="Files are processed on this computer and never uploaded">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <span>Processed on this computer</span>
+    </div>
+  </header>
 
-<main id="app"></main>
+  <nav class="side" aria-label="Tools" id="side">
+    <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Find a tool" aria-label="Find a tool"></label>
+    <div id="navlist"></div>
+  </nav>
 
-<footer>PaperVault runs locally. Your files are never uploaded anywhere.</footer>
+  <main class="main" id="main"></main>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>Local processing. No uploads, no accounts, no tracking.</span>
+    <span class="spacer"></span>
+    <span>PaperVault · MIT licence</span>
+  </footer>
+</div>
 
 <script>
-const TOOLS = [
-  { id: "merge", icon: "🔗", name: "Merge PDFs", desc: "Join several PDFs into one file.", accept: "application/pdf", multi: true, min: 2, fields: [] },
-  { id: "split", icon: "✂️", name: "Split PDF", desc: "Cut a PDF into smaller files.", accept: "application/pdf", fields: [
-      { key: "ranges", label: "Which pages go in each file?", type: "text", placeholder: "1-3, 4-6, 7-", help: "Separate files with commas. Leave the end empty to mean 'to the last page'." } ] },
-  { id: "extract", icon: "📄", name: "Extract pages", desc: "Keep only the pages you pick.", accept: "application/pdf", fields: [
-      { key: "pages", label: "Pages to keep", type: "text", placeholder: "1, 3-5", help: "They are kept in the order you type them." } ] },
-  { id: "delete", icon: "🗑️", name: "Delete pages", desc: "Remove pages you don't need.", accept: "application/pdf", fields: [
-      { key: "pages", label: "Pages to delete", type: "text", placeholder: "2, 7-9" } ] },
-  { id: "reorder", icon: "🔀", name: "Reorder pages", desc: "Put pages in a new order.", accept: "application/pdf", fields: [
-      { key: "order", label: "New page order", type: "text", placeholder: "3, 1, 2", help: "List every page you want, in the new order. Unlisted pages are removed." } ] },
-  { id: "rotate", icon: "🔄", name: "Rotate pages", desc: "Turn pages sideways or upside down.", accept: "application/pdf", fields: [
-      { key: "angle", label: "Rotate by", type: "select", options: [["90", "90° clockwise"], ["180", "180°"], ["270", "90° counter-clockwise"]] },
-      { key: "pages", label: "Pages (optional)", type: "text", placeholder: "Leave empty for all pages" } ] },
-  { id: "crop", icon: "✂️", name: "Crop margins", desc: "Trim white space from every page.", accept: "application/pdf", fields: [
-      { key: "top", label: "Top (points)", type: "number", value: "0" },
-      { key: "right", label: "Right (points)", type: "number", value: "0" },
-      { key: "bottom", label: "Bottom (points)", type: "number", value: "0" },
-      { key: "left", label: "Left (points)", type: "number", value: "0" } ] },
-  { id: "compress", icon: "🗜️", name: "Compress PDF", desc: "Make the file smaller.", accept: "application/pdf", fields: [
-      { key: "level", label: "How much to shrink?", type: "select", options: [["1200:50", "Smallest file"], ["1600:70", "Balanced (recommended)"], ["2400:85", "Best quality"]] } ] },
-  { id: "watermark", icon: "💧", name: "Add watermark", desc: "Stamp text across every page.", accept: "application/pdf", fields: [
-      { key: "text", label: "Watermark text", type: "text", value: "CONFIDENTIAL" } ] },
-  { id: "page-numbers", icon: "🔢", name: "Page numbers", desc: "Number your pages.", accept: "application/pdf", fields: [
-      { key: "template", label: "Text", type: "text", value: "{n} of {total}", help: "{n} is the page number, {total} is the total." },
-      { key: "position", label: "Position", type: "select", options: [["bottom-center", "Bottom centre"], ["bottom-right", "Bottom right"], ["bottom-left", "Bottom left"], ["top-center", "Top centre"], ["top-right", "Top right"], ["top-left", "Top left"]] } ] },
-  { id: "metadata", icon: "🏷️", name: "Edit properties", desc: "Set the title and author.", accept: "application/pdf", fields: [
-      { key: "title", label: "Title", type: "text" },
-      { key: "author", label: "Author", type: "text" } ] },
-  { id: "pdf-to-images", icon: "🖼️", name: "PDF to images", desc: "Save each page as PNG or JPG.", accept: "application/pdf", fields: [
-      { key: "format", label: "Format", type: "select", options: [["png", "PNG"], ["jpg", "JPG"]] },
-      { key: "dpi", label: "Quality", type: "select", options: [["150", "Normal (150 dpi)"], ["300", "High (300 dpi)"]] } ], note: "Needs Poppler installed. See the README." },
-  { id: "images-to-pdf", icon: "📷", name: "Images to PDF", desc: "Put photos into one PDF.", accept: "image/*", multi: true, fields: [
-      { key: "page_size", label: "Page size", type: "select", options: [["fit", "Fit to each image"], ["a4", "A4"], ["letter", "US Letter"]] } ] },
-  { id: "extract-images", icon: "🎞️", name: "Extract images", desc: "Save the pictures inside a PDF.", accept: "application/pdf", fields: [] },
-  { id: "to-text", icon: "📝", name: "Extract text", desc: "Copy the text out of a PDF.", accept: "application/pdf", fields: [], preview: true },
-  { id: "info", icon: "ℹ️", name: "PDF info", desc: "See page count and details.", accept: "application/pdf", fields: [], preview: true },
-];
+// Icons: 24px line icons drawn in the house style (stroke 1.7, round caps).
+const ICON = {
+  merge: '<path d="M4 4h9v13H4z"/><path d="M11 7h9v13h-9z"/>',
+  split: '<path d="M4 6v12M20 6v12M4 12h16"/><path d="M9 9l3 3-3 3M15 9l-3 3 3 3"/>',
+  extract: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/>',
+  delete: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  reorder: '<path d="M7 4v16M4 17l3 3 3-3M17 20V4M14 7l3-3 3 3"/>',
+  rotate: '<path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/>',
+  crop: '<path d="M6 2v16h16"/><path d="M2 6h16v16"/>',
+  compress: '<path d="M4 10l4 4 4-4M4 14l4-4 4 4"/><path d="M20 4v16M16 8l4-4 4 4M16 16l4 4 4-4"/>',
+  watermark: '<path d="M4 17c3-6 5-6 8 0s5 6 8 0"/><path d="M4 9h16M4 5h16"/>',
+  numbers: '<path d="M5 4h14v16H5z"/><path d="M9 17h6"/><path d="M11 12l1-1v5"/>',
+  properties: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  images: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 9"/>',
+  imagesToPdf: '<rect x="3" y="4" width="11" height="12" rx="2"/><path d="M7 20h12a2 2 0 0 0 2-2V8"/><path d="m3 13 3-3 4 4"/>',
+  text: '<path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  sun: '<circle cx="12" cy="12" r="4"/>',
+};
+const svg = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.info}</svg>`;
 
-const app = document.getElementById("app");
+// Tools are grouped by the job they do. "extra" marks tools that need Poppler installed.
+const GROUPS = [
+  { title: "Organise", tools: [
+    { id: "merge", icon: "merge", name: "Merge PDFs", desc: "Join several PDFs into one file.", accept: "application/pdf", multi: true, min: 2, fields: [] },
+    { id: "split", icon: "split", name: "Split PDF", desc: "Cut a PDF into smaller files.", accept: "application/pdf", fields: [
+        { key: "ranges", label: "Pages for each file", type: "text", placeholder: "1-3, 4-6, 7-", help: "Separate files with commas. An empty end means 'to the last page'." } ] },
+    { id: "extract", icon: "extract", name: "Extract pages", desc: "Keep only the pages you pick.", accept: "application/pdf", fields: [
+        { key: "pages", label: "Pages to keep", type: "text", placeholder: "1, 3-5", help: "Kept in the order you type them." } ] },
+    { id: "delete", icon: "delete", name: "Delete pages", desc: "Remove pages you don't need.", accept: "application/pdf", fields: [
+        { key: "pages", label: "Pages to delete", type: "text", placeholder: "2, 7-9" } ] },
+    { id: "reorder", icon: "reorder", name: "Reorder pages", desc: "Put pages in a new order.", accept: "application/pdf", fields: [
+        { key: "order", label: "New page order", type: "text", placeholder: "3, 1, 2", help: "Unlisted pages are removed." } ] },
+    { id: "rotate", icon: "rotate", name: "Rotate pages", desc: "Turn pages sideways or upside down.", accept: "application/pdf", fields: [
+        { key: "angle", label: "Rotation", type: "select", options: [["90", "90° clockwise"], ["180", "180°"], ["270", "90° counter-clockwise"]] },
+        { key: "pages", label: "Pages", type: "text", placeholder: "Leave empty for all pages" } ] },
+    { id: "crop", icon: "crop", name: "Crop margins", desc: "Trim white space from every page.", accept: "application/pdf", fields: [
+        { key: "top", label: "Top (points)", type: "number", value: "0" },
+        { key: "right", label: "Right (points)", type: "number", value: "0" },
+        { key: "bottom", label: "Bottom (points)", type: "number", value: "0" },
+        { key: "left", label: "Left (points)", type: "number", value: "0" } ] },
+  ]},
+  { title: "Optimise", tools: [
+    { id: "compress", icon: "compress", name: "Compress PDF", desc: "Reduce file size.", accept: "application/pdf", fields: [
+        { key: "level", label: "Size and quality", type: "select", options: [["1200:50", "Smallest file"], ["1600:70", "Balanced (recommended)"], ["2400:85", "Best quality"]] } ] },
+  ]},
+  { title: "Edit", tools: [
+    { id: "watermark", icon: "watermark", name: "Add watermark", desc: "Stamp text across every page.", accept: "application/pdf", fields: [
+        { key: "text", label: "Watermark text", type: "text", value: "CONFIDENTIAL" } ] },
+    { id: "page-numbers", icon: "numbers", name: "Page numbers", desc: "Number your pages.", accept: "application/pdf", fields: [
+        { key: "template", label: "Text", type: "text", value: "{n} of {total}", help: "{n} is the page number, {total} is the total." },
+        { key: "position", label: "Position", type: "select", options: [["bottom-center", "Bottom centre"], ["bottom-right", "Bottom right"], ["bottom-left", "Bottom left"], ["top-center", "Top centre"], ["top-right", "Top right"], ["top-left", "Top left"]] } ] },
+    { id: "metadata", icon: "properties", name: "Document properties", desc: "Set the title and author.", accept: "application/pdf", fields: [
+        { key: "title", label: "Title", type: "text" },
+        { key: "author", label: "Author", type: "text" } ] },
+  ]},
+  { title: "Convert", tools: [
+    { id: "pdf-to-images", icon: "images", name: "PDF to images", desc: "Save each page as PNG or JPG.", accept: "application/pdf", extra: true, fields: [
+        { key: "format", label: "Format", type: "select", options: [["png", "PNG"], ["jpg", "JPG"]] },
+        { key: "dpi", label: "Resolution", type: "select", options: [["150", "Standard (150 dpi)"], ["300", "High (300 dpi)"]] } ],
+      note: "Requires Poppler (pdftoppm) on this computer." },
+    { id: "images-to-pdf", icon: "imagesToPdf", name: "Images to PDF", desc: "Put photos into one PDF.", accept: "image/*", multi: true, fields: [
+        { key: "page_size", label: "Page size", type: "select", options: [["fit", "Fit to each image"], ["a4", "A4"], ["letter", "US Letter"]] } ] },
+    { id: "extract-images", icon: "images", name: "Extract images", desc: "Save the pictures inside a PDF.", accept: "application/pdf", fields: [] },
+    { id: "to-text", icon: "text", name: "Extract text", desc: "Copy the text out of a PDF.", accept: "application/pdf", fields: [], preview: true },
+  ]},
+  { title: "Inspect", tools: [
+    { id: "info", icon: "info", name: "PDF information", desc: "Page count and document details.", accept: "application/pdf", fields: [], preview: true },
+  ]},
+];
+const TOOLS = GROUPS.flatMap((g) => g.tools.map((t) => ({ ...t, group: g.title })));
+
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const size = (n) => (n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(0)} KB` : `${(n / 1048576).toFixed(1)} MB`);
+const main = document.getElementById("main");
+const crumb = document.getElementById("crumb");
+const navlist = document.getElementById("navlist");
+const query = document.getElementById("q");
+
+// Sidebar: every group with its tools. Filtering hides non-matching entries.
+function renderNav() {
+  navlist.innerHTML = GROUPS.map((g) => `
+    <div class="nav-group" data-group="${esc(g.title)}">
+      <div class="section-label">${esc(g.title)}</div>
+      ${g.tools.map((t) => `<a class="nav" href="#${t.id}" data-search="${esc((t.name + " " + t.desc).toLowerCase())}">${svg(t.icon)}<span>${esc(t.name)}</span></a>`).join("")}
+    </div>`).join("");
+  markCurrent();
+}
+function markCurrent() {
+  const id = location.hash.slice(1);
+  navlist.querySelectorAll("a.nav").forEach((a) => {
+    if (a.getAttribute("href") === `#${id}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+}
+query.addEventListener("input", () => {
+  const q = query.value.trim().toLowerCase();
+  navlist.querySelectorAll("a.nav").forEach((a) => { a.hidden = q !== "" && !a.dataset.search.includes(q); });
+  navlist.querySelectorAll(".nav-group").forEach((g) => { g.hidden = [...g.querySelectorAll("a.nav")].every((a) => a.hidden); });
+});
 
 function renderHome() {
   document.title = "PaperVault";
-  app.innerHTML = `
-    <h1>What would you like to do?</h1>
-    <p class="lead">Pick a tool. Everything happens on your computer, so your files stay private.</p>
-    <div class="grid">
-      ${TOOLS.map((t) => `<a class="tile" href="#${t.id}"><div class="icon">${t.icon}</div><h2>${esc(t.name)}</h2><p>${esc(t.desc)}</p></a>`).join("")}
+  crumb.innerHTML = "<strong>All tools</strong>";
+  main.innerHTML = `
+    <div class="wrap">
+      <h1 class="title">Work with PDFs, privately</h1>
+      <p class="sub">Choose a tool to begin. Your files never leave this computer.</p>
+      <div class="hero">
+        <div class="i-big">${svg("info")}</div>
+        <div>
+          <h2>How it works</h2>
+          <p>Add your files, set the options, then download the result. Every step runs locally.</p>
+        </div>
+      </div>
+      ${GROUPS.map((g) => `
+        <section class="cat" aria-labelledby="cat-${esc(g.title)}">
+          <h3 id="cat-${esc(g.title)}">${esc(g.title)}</h3>
+          <div class="cards">
+            ${g.tools.map((t) => `
+              <a class="card" href="#${t.id}">
+                <span class="ic">${svg(t.icon)}</span>
+                <span><h4>${esc(t.name)}</h4><p>${esc(t.desc)}</p>${t.extra ? `<span class="badge">Needs Poppler</span>` : ""}</span>
+              </a>`).join("")}
+          </div>
+        </section>`).join("")}
     </div>`;
 }
 
 function renderTool(tool) {
   document.title = `${tool.name} · PaperVault`;
+  crumb.innerHTML = `${esc(tool.group)} <span aria-hidden="true">/</span> <strong>${esc(tool.name)}</strong>`;
   const fieldsHtml = tool.fields.map((f) => {
     const id = `f-${f.key}`;
-    let input;
-    if (f.type === "select") {
-      input = `<select id="${id}">${f.options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`;
-    } else {
-      input = `<input id="${id}" type="${f.type}" value="${esc(f.value ?? "")}" placeholder="${esc(f.placeholder ?? "")}" ${f.required ? "required" : ""}>`;
-    }
-    return `<label for="${id}">${esc(f.label)} ${input}${f.help ? `<small>${esc(f.help)}</small>` : ""}</label>`;
+    const input = f.type === "select"
+      ? `<select id="${id}">${f.options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`
+      : `<input id="${id}" type="${f.type}" value="${esc(f.value ?? "")}" placeholder="${esc(f.placeholder ?? "")}">`;
+    return `<label class="field" for="${id}"><span>${esc(f.label)}</span>${input}${f.help ? `<small>${esc(f.help)}</small>` : ""}</label>`;
   }).join("");
 
-  app.innerHTML = `
-    <a class="back" href="#">← All tools</a>
-    <div class="card">
-      <h1>${tool.icon} ${esc(tool.name)}</h1>
-      <p class="lead">${esc(tool.desc)}${tool.note ? ` <br><small>${esc(tool.note)}</small>` : ""}</p>
-      <label class="drop" id="drop">
-        <strong>Drop ${tool.multi ? "files" : "a file"} here</strong>
-        or click to choose ${tool.accept === "image/*" ? "images" : "a PDF"}
-        <input type="file" id="picker" accept="${tool.accept}" ${tool.multi ? "multiple" : ""}>
-      </label>
-      <ul class="files" id="files"></ul>
-      <div class="fields">${fieldsHtml}</div>
-      <div class="actions">
-        <button class="primary" id="go" disabled>${esc(tool.name)}</button>
-        <span class="status" id="status"></span>
+  main.innerHTML = `
+    <div class="wrap">
+      <a class="nav" href="#" style="width:auto;padding:0 6px 0 0;margin-bottom:10px;color:var(--accent)">← All tools</a>
+      <h1 class="title">${esc(tool.name)}</h1>
+      <p class="sub">${esc(tool.desc)}${tool.note ? ` ${esc(tool.note)}` : ""}</p>
+      <ol class="steps" aria-label="Progress">
+        <li class="now"><span class="n">1</span>Add files</li>
+        <li><span class="n">2</span>Set options</li>
+        <li><span class="n">3</span>Download</li>
+      </ol>
+      <div class="grid2">
+        <section class="panel" aria-labelledby="h-files">
+          <div class="panel-h"><span id="h-files">Files</span><small id="count"></small></div>
+          <label class="drop" id="drop">
+            <span class="i-big">${svg("merge")}</span>
+            <strong>Drop ${tool.multi ? "files" : "a file"} here</strong>
+            <span>or click to browse ${tool.accept === "image/*" ? "for images" : "for PDFs"}</span>
+            <input type="file" id="picker" accept="${tool.accept}" ${tool.multi ? "multiple" : ""}>
+          </label>
+          <table class="files" id="files" aria-live="polite" hidden>
+            <thead><tr><th>Name</th><th style="text-align:right">Size</th><th><span class="sr-only"></span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </section>
+        <section class="panel" aria-labelledby="h-opts">
+          <div class="panel-h"><span id="h-opts">Options</span></div>
+          <div class="panel-b">
+            ${tool.fields.length ? fieldsHtml : `<p class="sub" style="margin:0">No options for this tool.</p>`}
+            <div class="run">
+              <button class="primary" id="go" disabled>${esc(tool.name)}</button>
+              <div class="status" id="status" role="status"></div>
+            </div>
+          </div>
+        </section>
       </div>
       <pre class="preview" id="preview" hidden></pre>
     </div>`;
@@ -188,14 +348,24 @@ function renderTool(tool) {
   const drop = document.getElementById("drop");
   const go = document.getElementById("go");
   const status = document.getElementById("status");
+  const table = document.getElementById("files");
 
   const refresh = () => {
-    const list = document.getElementById("files");
-    list.innerHTML = files.map((f, i) => `<li><span>${esc(f.name)}</span><button data-i="${i}" aria-label="Remove ${esc(f.name)}">Remove</button></li>`).join("");
-    const enoughFiles = files.length >= (tool.min || 1);
-    go.disabled = !enoughFiles;
-    status.textContent = "";
+    const body = table.querySelector("tbody");
+    table.hidden = files.length === 0;
+    body.innerHTML = files.map((f, i) => `
+      <tr>
+        <td><div class="nm">${svg("extract")}<span>${esc(f.name)}</span></div></td>
+        <td class="num">${size(f.size)}</td>
+        <td style="width:40px"><button class="rm" data-i="${i}" aria-label="Remove ${esc(f.name)}">${svg("delete")}</button></td>
+      </tr>`).join("");
+    document.getElementById("count").textContent = files.length ? `${files.length} file${files.length > 1 ? "s" : ""}` : "";
+    go.disabled = files.length < (tool.min || 1);
     status.className = "status";
+    status.textContent = tool.min && files.length && files.length < tool.min ? `Add at least ${tool.min} files.` : "";
+    document.querySelectorAll(".steps li").forEach((li, i) => {
+      li.className = i === 0 && files.length === 0 ? "now" : i === 0 ? "done" : i === 1 && files.length ? "now" : "";
+    });
   };
   const setFiles = (list) => {
     const picked = Array.from(list);
@@ -207,8 +377,9 @@ function renderTool(tool) {
   drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
   drop.addEventListener("dragleave", () => drop.classList.remove("over"));
   drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); setFiles(e.dataTransfer.files); });
-  document.getElementById("files").addEventListener("click", (e) => {
-    if (e.target.dataset.i !== undefined) { files.splice(Number(e.target.dataset.i), 1); refresh(); }
+  table.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-i]");
+    if (btn) { files.splice(Number(btn.dataset.i), 1); refresh(); }
   });
 
   go.addEventListener("click", async () => {
@@ -216,7 +387,6 @@ function renderTool(tool) {
     files.forEach((f) => form.append("file", f, f.name));
     for (const f of tool.fields) {
       const value = document.getElementById(`f-${f.key}`).value.trim();
-      if (f.required && !value) { status.textContent = `Please enter the ${f.label.toLowerCase()}.`; status.className = "status err"; return; }
       if (f.key === "level") {
         const [max_side, quality] = value.split(":");
         form.append("max_side", max_side); form.append("quality", quality);
@@ -236,11 +406,12 @@ function renderTool(tool) {
       const blob = await res.blob();
       const name = /filename="([^"]+)"/.exec(res.headers.get("Content-Disposition") || "")?.[1] || "result";
       const url = URL.createObjectURL(blob);
-      status.className = "status ok";
-      status.innerHTML = "";
-      const link = document.createElement("a");
-      link.className = "button"; link.href = url; link.download = name; link.textContent = `Download ${name}`;
-      status.appendChild(link);
+      status.className = "status";
+      status.innerHTML = `<div class="result">
+        <div class="ok">${svg("info")} Done. ${size(blob.size)} ready.</div>
+        <div class="fname">${esc(name)}</div>
+        <a class="btn" href="${url}" download="${esc(name)}">Download ${esc(name)}</a>
+      </div>`;
       if (tool.preview) {
         const pre = document.getElementById("preview");
         pre.textContent = await blob.text();
@@ -260,9 +431,11 @@ function route() {
   const id = location.hash.slice(1);
   const tool = TOOLS.find((t) => t.id === id);
   if (tool) renderTool(tool); else renderHome();
-  window.scrollTo(0, 0);
+  markCurrent();
+  main.scrollTop = 0;
 }
 window.addEventListener("hashchange", route);
+renderNav();
 route();
 </script>
 </body>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 72" width="330" height="72" role="img" aria-label="PaperVault">
+  <rect x="0" y="4" width="64" height="64" rx="14" fill="#1E7A62"/>
+  <path d="M18 16 H40 L46 22 V56 H18 Z" fill="#F7F5F0"/>
+  <path d="M40 16 V22 H46 Z" fill="#CFE3DB"/>
+  <circle cx="32" cy="36" r="4.5" fill="#1E7A62"/>
+  <rect x="30.5" y="39" width="3" height="9" rx="1.5" fill="#1E7A62"/>
+  <text x="80" y="50" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#16202B"><tspan font-weight="400">Paper</tspan><tspan font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="700" fill="#1E7A62">Vault</tspan></text>
+</svg>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaperVault: private PDF tools that run on your computer</title>
+<meta name="description" content="PaperVault merges, splits, compresses, watermarks and converts PDFs locally. No uploads, no accounts, no tracking.">
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d232b; --muted:#5d6875; --line:#e2e6ec; --accent:#2f6fed; --accent-ink:#fff; --code:#eef1f5; --radius:14px; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#13171c; --card:#1c2229; --ink:#e8ecf1; --muted:#9aa5b1; --line:#2b333d; --accent:#5b8cff; --accent-ink:#0b1220; --code:#11151a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color:var(--accent); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+  header { border-bottom:1px solid var(--line); background:var(--card); }
+  header .wrap { display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand { font-weight:800; font-size:20px; color:var(--ink); text-decoration:none; }
+  nav a { margin-left:18px; color:var(--muted); text-decoration:none; font-size:15px; }
+  nav a:hover { color:var(--ink); }
+  .hero { padding: 64px 0 40px; text-align:center; }
+  .hero h1 { font-size: clamp(30px, 5vw, 46px); line-height:1.15; margin:0 0 16px; }
+  .hero p { color:var(--muted); font-size:18px; max-width:620px; margin:0 auto 26px; }
+  .btn { display:inline-block; background:var(--accent); color:var(--accent-ink); font-weight:700; padding:12px 22px; border-radius:10px; text-decoration:none; margin:4px; }
+  .btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .pill { display:inline-block; font-size:14px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:4px 12px; margin-top:22px; background:var(--card); }
+  section { padding: 36px 0; }
+  h2 { font-size:26px; margin:0 0 18px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
+  .card h3 { margin:0 0 6px; font-size:17px; }
+  .card p { margin:0; color:var(--muted); font-size:15px; }
+  pre { background:var(--code); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; font-size:14px; line-height:1.5; }
+  code { font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  .note { color:var(--muted); font-size:15px; }
+  ul.clean { padding-left: 20px; }
+  ul.clean li { margin: 6px 0; }
+  footer { border-top:1px solid var(--line); color:var(--muted); font-size:14px; padding:24px 0; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#">PaperVault</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+      <a href="#cli">Command line</a>
+      <a href="https://github.com/rahuling/papervault">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>PDF tools that never leave your computer.</h1>
+    <p>Merge, split, compress, watermark and convert PDFs. Your files are processed on your own machine. Nothing is uploaded, and there are no accounts or trackers.</p>
+    <a class="btn" href="https://github.com/rahuling/papervault#install">Install PaperVault</a>
+    <a class="btn ghost" href="https://github.com/rahuling/papervault">View source</a>
+    <div><span class="pill">Open source · MIT · Written in Rust</span></div>
+  </div>
+
+  <section id="features">
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card"><h3>Merge PDFs</h3><p>Join several files into one, in the order you choose.</p></div>
+      <div class="card"><h3>Split PDF</h3><p>Cut a PDF by page ranges, or every N pages.</p></div>
+      <div class="card"><h3>Extract and delete pages</h3><p>Keep or remove the pages you pick, in any order.</p></div>
+      <div class="card"><h3>Reorder and rotate</h3><p>Rearrange pages, and turn them 90, 180 or 270 degrees.</p></div>
+      <div class="card"><h3>Crop margins</h3><p>Trim white space from every page.</p></div>
+      <div class="card"><h3>Compress PDF</h3><p>Shrink large scanned or photo-heavy files by downscaling images.</p></div>
+      <div class="card"><h3>Watermark</h3><p>Stamp text such as DRAFT or CONFIDENTIAL across pages.</p></div>
+      <div class="card"><h3>Page numbers</h3><p>Add numbers or header and footer text anywhere on the page.</p></div>
+      <div class="card"><h3>Images to PDF</h3><p>Turn photos into a PDF with fit, A4 or Letter pages.</p></div>
+      <div class="card"><h3>PDF to images</h3><p>Save each page as PNG or JPG.</p></div>
+      <div class="card"><h3>Extract text and images</h3><p>Copy the text out of a PDF, or save the pictures inside it.</p></div>
+      <div class="card"><h3>Properties and info</h3><p>Set the title and author, and see page count and details.</p></div>
+    </div>
+  </section>
+
+  <section id="privacy">
+    <h2>Private by design</h2>
+    <ul class="clean">
+      <li><strong>No uploads.</strong> PaperVault has no network code for your files. Every operation runs on your computer.</li>
+      <li><strong>No accounts, no analytics, no tracking.</strong> The app does not phone home.</li>
+      <li><strong>Local-only web UI.</strong> The browser interface runs on <code>127.0.0.1</code>, so other devices on your network cannot reach it. It also rejects requests from unexpected hostnames.</li>
+      <li><strong>Open source.</strong> The code is on GitHub, so you can check these claims yourself.</li>
+    </ul>
+  </section>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p>PaperVault is built from source with Rust (1.85 or newer):</p>
+<pre><code>git clone https://github.com/rahuling/papervault
+cd papervault
+cargo install --path .
+papervault serve      # opens the UI at http://127.0.0.1:8844</code></pre>
+    <p class="note">PDF to images needs Poppler's <code>pdftoppm</code> on your PATH. Every other tool works without extra software.</p>
+  </section>
+
+  <section id="cli">
+    <h2>Command line and AI assistants</h2>
+    <p>Every tool is available from the terminal, with JSON output for scripts and AI assistants:</p>
+<pre><code>papervault tools
+papervault run merge a.pdf b.pdf -o out/
+papervault run split big.pdf -p every=10 -o parts/
+papervault run compress scan.pdf -p quality=60 -o out/
+papervault --json run to-text invoice.pdf -o out/</code></pre>
+    <p>An AI skill file ships with the project in <a href="https://github.com/rahuling/papervault/tree/main/skills/papervault"><code>skills/papervault</code></a>, so assistants can run PaperVault for you without sending your files to a cloud service.</p>
+  </section>
+
+  <section>
+    <h2>Coming next</h2>
+    <ul class="clean">
+      <li>Password protection and removal (encryption)</li>
+      <li>OCR for scanned documents</li>
+      <li>PDF to Word and Excel, and Office to PDF</li>
+      <li>Signatures, redaction and PDF/A</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">PaperVault is free and open source under the MIT license. Your files stay on your computer.</div>
+</footer>
+</body>
+</html>

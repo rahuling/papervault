@@ -107,7 +107,7 @@ Layout:
 
 ## Platforms
 
-Written in Rust with no platform-specific code. The Windows build is what has been tested so far; macOS and Linux should build with the same commands but have not been verified yet.
+CI builds and runs the full test suite on Windows, Linux (x86_64) and macOS (Apple Silicon) on every push. macOS Intel is not built at the moment.
 
 ## License
 

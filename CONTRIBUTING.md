@@ -54,7 +54,7 @@ If you change the interface, please attach updated screenshots so reviewers can 
 
 ## Test on your platform
 
-PaperVault is developed on Windows. macOS and Linux builds should work with the same commands, but they have not been verified yet. If you have one of those systems:
+PaperVault is developed on Windows. CI builds and tests Windows, Linux (x86_64) and macOS (Apple Silicon) on every push, so those are verified. macOS Intel is not covered yet. If you have an Intel Mac, please test it:
 
 1. Run `cargo test` and note any failures.
 2. Run `cargo run -- serve` and check that the UI loads and a merge works.

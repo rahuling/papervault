@@ -21,6 +21,7 @@ Website: https://rahuling.github.io/papervault/
 | Optimize | Compress (downscales embedded photos) |
 | Edit | Watermark, page numbers / headers / footers, edit title and author |
 | Convert | Images to PDF, PDF to images (PNG/JPG), PDF to text, extract embedded images |
+| Read | Viewer: open and read a PDF (the browser UI's home screen) |
 | Inspect | PDF info (pages, metadata) |
 
 Not in this release: password protection (protect and unlock), OCR, PDF to Word/Excel, Office to PDF, e-signatures, redaction and PDF/A. Encryption is planned next.

@@ -32,130 +32,115 @@
   button, input, select { font: inherit; color: inherit; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   svg.i { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  [hidden] { display: none !important; }
 
-  /* Shell: toolbar on top, sidebar left, workspace right, status bar at the bottom */
-  .app { height: 100vh; min-height: 560px; display: grid; grid-template-rows: 52px 1fr 28px; grid-template-columns: 252px 1fr; grid-template-areas: "top top" "side main" "status status"; }
-  .top { grid-area: top; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  /* Shell: top bar, tool rail, document stage, inspector, status bar */
+  .app { height: 100vh; min-height: 600px; display: grid; grid-template-columns: 232px minmax(0, 1fr) 320px; grid-template-rows: 52px minmax(0, 1fr) 28px; grid-template-areas: "top top top" "rail stage insp" "status status status"; }
+  .top { grid-area: top; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--line); min-width: 0; }
   .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
   .brand em { font-style: normal; font-family: var(--serif); font-weight: 400; }
-  .crumb { color: var(--faint); font-size: 13px; padding-left: 14px; border-left: 1px solid var(--line); }
-  .crumb strong { color: var(--ink); font-weight: 600; }
+  .docname { color: var(--faint); font-size: 13px; padding-left: 14px; border-left: 1px solid var(--line); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .docname strong { color: var(--ink); font-weight: 600; }
   .spacer { flex: 1; }
-  .local { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+  .local { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--accent); font-weight: 600; white-space: nowrap; }
 
-  .side { grid-area: side; background: var(--side); border-right: 1px solid var(--line); overflow-y: auto; padding: 12px 10px 20px; }
-  .search { display: flex; align-items: center; gap: 8px; margin: 2px 4px 14px; padding: 0 10px; height: 32px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--faint); }
+  .rail { grid-area: rail; background: var(--side); border-right: 1px solid var(--line); overflow-y: auto; padding: 12px 10px 20px; min-height: 0; }
+  .search { display: flex; align-items: center; gap: 8px; margin: 2px 4px 6px; padding: 0 10px; height: 32px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--faint); }
   .search input { border: 0; background: transparent; width: 100%; outline: none; font-size: 13px; }
   .section-label { margin: 16px 10px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
-  .nav { display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; text-decoration: none; font-size: 13.5px; }
+  .nav { display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); text-decoration: none; font-size: 13.5px; }
   .nav svg.i { color: var(--muted); }
   .nav:hover { background: rgb(0 0 0 / 4%); }
   .nav[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
   .nav[aria-current="page"] svg.i { color: var(--accent); }
   .nav[hidden] { display: none; }
 
-  .main { grid-area: main; overflow-y: auto; padding: 28px 32px 40px; }
-  .wrap { max-width: 980px; margin: 0 auto; }
-  .title { margin: 0 0 4px; font: 400 26px/1.2 var(--serif); letter-spacing: -.01em; }
-  .sub { margin: 0 0 22px; color: var(--muted); font-size: 14px; }
+  /* Stage: the open PDF, the text result, or the empty state */
+  .stage { grid-area: stage; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 14px; }
+  .app.dragging .stage { outline: 2px dashed var(--accent); outline-offset: -10px; }
+  .pdf-view { flex: 1; width: 100%; min-height: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); box-shadow: var(--shadow); }
+  .pdf-fallback { padding: 24px; text-align: center; color: var(--muted); }
+  .pdf-fallback a { color: var(--accent); font-weight: 600; }
+  .empty-drop { flex: 1; display: grid; place-items: center; align-content: center; gap: 8px; text-align: center; padding: 24px; border: 1.5px dashed var(--line-strong); border-radius: 12px; background: var(--panel); color: var(--muted); }
+  .empty-drop h2 { margin: 6px 0 0; font: 400 26px/1.2 var(--serif); color: var(--ink); }
+  .empty-drop p { margin: 0 0 10px; max-width: 360px; font-size: 13.5px; }
+  .big-icon { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .big-icon svg.i { width: 24px; height: 24px; }
+  .textview { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+  .tv-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 13px; }
+  .tv-text { flex: 1; min-height: 0; overflow: auto; margin: 0; padding: 16px; font: 13px/1.55 ui-monospace, Consolas, monospace; white-space: pre-wrap; }
 
-  /* Home */
-  .hero { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); margin-bottom: 24px; }
-  .hero .i-big { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
-  .hero h2 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
-  .hero p { margin: 0; color: var(--muted); font-size: 13px; }
-  .cat { margin-bottom: 26px; }
-  .cat h3 { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--faint); }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
-  .card { display: flex; gap: 12px; align-items: flex-start; padding: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; color: inherit; text-decoration: none; box-shadow: var(--shadow); transition: border-color .12s, transform .12s; }
-  .card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
-  .card .ic { width: 34px; height: 34px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex-shrink: 0; }
-  .card h4 { margin: 1px 0 2px; font-size: 14px; font-weight: 600; }
-  .card p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.4; }
-  .card .badge { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--muted); border: 1px solid var(--line-strong); border-radius: 999px; padding: 1px 8px; }
-  .empty { color: var(--muted); padding: 30px 0; text-align: center; }
-
-  /* Tool workspace */
-  .steps { display: flex; gap: 0; margin: 0 0 22px; font-size: 12.5px; color: var(--faint); }
-  .steps li { list-style: none; display: flex; align-items: center; gap: 8px; }
-  .steps li + li::before { content: ""; width: 28px; height: 1px; background: var(--line-strong); margin: 0 10px; }
-  .steps .n { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-strong); font-size: 11px; font-weight: 700; }
-  .steps .done .n, .steps .now .n { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-  .steps .now { color: var(--ink); font-weight: 600; }
-  ul.steps { padding: 0; margin: 0 0 22px; }
-  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
-  .panel-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 13px; }
-  .panel-h small { color: var(--muted); font-weight: 400; }
-  .panel-b { padding: 16px; }
-
-  .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; min-height: 170px; margin: 16px; border: 1.5px dashed var(--line-strong); border-radius: 10px; background: var(--side); cursor: pointer; color: var(--muted); transition: border-color .12s, background .12s; }
-  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
-  .drop .i-big { width: 44px; height: 44px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); display: grid; place-items: center; color: var(--accent); margin-bottom: 4px; }
-  .drop strong { color: var(--ink); font-size: 14px; }
-  .drop input { display: none; }
-  table.files { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.files th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; padding: 8px 16px; border-top: 1px solid var(--line); }
-  table.files td { padding: 10px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
-  table.files td.num { color: var(--muted); text-align: right; white-space: nowrap; }
-  table.files .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  table.files .nm span { overflow-wrap: anywhere; }
-  table.files .nm svg.i { color: var(--danger); width: 16px; height: 16px; }
+  /* Inspector: the open document, or the options and result of the chosen tool */
+  .inspector { grid-area: insp; background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 18px 18px 24px; min-height: 0; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+  .ins-h h2 { margin: 4px 0 6px; font: 400 22px/1.2 var(--serif); }
+  .ins-h p { margin: 0; color: var(--muted); font-size: 13px; }
+  .ins-sec { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .ins-sec h3 { margin: 0 0 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--faint); }
+  .ins-sec > p { margin: 0; color: var(--muted); font-size: 13px; }
+  .item { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 10px; margin-bottom: 6px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; }
+  .item span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .item svg.i { color: var(--muted); width: 16px; height: 16px; }
   .rm { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 6px; display: grid; place-items: center; }
   .rm:hover { color: var(--danger); background: rgb(180 35 24 / 8%); }
-
   .field { display: grid; gap: 6px; margin-bottom: 14px; }
   .field > span { font-size: 12.5px; font-weight: 600; }
   .field small { color: var(--muted); font-size: 12px; }
   input[type=text], input[type=number], input[type=password], select { width: 100%; height: 34px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--line-strong); background: var(--panel); outline: none; }
   input:focus, select:focus { border-color: var(--focus); box-shadow: 0 0 0 3px rgb(37 99 235 / 15%); }
 
-  .run { margin-top: 6px; }
+  button.pick, button.ghost-block { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--panel); font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  button.pick:hover, button.ghost-block:hover { border-color: var(--muted); }
+  button.ghost-block { width: 100%; margin-top: 8px; }
   button.primary, a.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 38px; border: 0; border-radius: 8px; padding: 0 16px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; }
   button.primary:hover:not(:disabled), a.btn:hover { filter: brightness(1.06); }
   button.primary:disabled { background: var(--line-strong); color: var(--muted); cursor: default; }
-  a.btn.ghost { background: var(--panel); color: var(--ink); border: 1px solid var(--line-strong); }
-  .status { margin-top: 12px; font-size: 13px; min-height: 18px; color: var(--muted); }
+  .status { margin-top: 10px; font-size: 13px; min-height: 18px; color: var(--muted); }
   .status.err { color: var(--danger); }
-  .result { margin-top: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-soft); display: grid; gap: 10px; }
+  .result { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-soft); }
   .result .ok { display: flex; gap: 8px; align-items: center; font-weight: 600; color: var(--accent); font-size: 13px; }
   .result .fname { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
-  pre.preview { margin: 14px 0 0; padding: 14px; background: var(--side); border: 1px solid var(--line); border-radius: 8px; white-space: pre-wrap; max-height: 320px; overflow: auto; font: 12.5px/1.5 ui-monospace, Consolas, monospace; }
 
   .statusbar { grid-area: status; display: flex; align-items: center; gap: 14px; padding: 0 14px; background: var(--panel); border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
   .statusbar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
   .statusbar .spacer { flex: 1; }
 
-  @media (max-width: 860px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: 52px auto 1fr 28px; grid-template-areas: "top" "side" "main" "status"; height: auto; min-height: 100vh; }
-    .side { border-right: 0; border-bottom: 1px solid var(--line); max-height: 260px; }
-    .main { overflow: visible; padding: 20px 16px 32px; }
-    .grid2 { grid-template-columns: 1fr; }
-    .crumb, .local span { display: none; }
+  /* Narrower screens: the inspector drops below the stage */
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 200px minmax(0, 1fr); grid-template-rows: 52px minmax(420px, 1fr) auto 28px; grid-template-areas: "top top" "rail stage" "rail insp" "status status"; height: auto; min-height: 100vh; }
+    .stage { min-height: 70vh; }
+    .inspector { border-left: 0; border-top: 1px solid var(--line); max-height: 60vh; }
+  }
+  /* Phones: everything stacks */
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: 52px auto 70vh auto 28px; grid-template-areas: "top" "rail" "stage" "insp" "status"; }
+    .rail { border-right: 0; border-bottom: 1px solid var(--line); max-height: 220px; }
+    .inspector { max-height: none; }
+    .docname, .local span { display: none; }
+    .stage { padding: 10px; }
+    .empty-drop h2 { font-size: 22px; }
   }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <header class="top">
-    <a class="brand" href="#" aria-label="PaperVault home">
+    <a class="brand" href="#" aria-label="PaperVault viewer">
       <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1E7A62"/><path d="M18 12h22l6 6v34H18z" fill="#F7F5F0"/><path d="M40 12v6h6z" fill="#CFE3DB"/><circle cx="32" cy="32" r="4.5" fill="#1E7A62"/><rect x="30.5" y="35" width="3" height="9" rx="1.5" fill="#1E7A62"/></svg>
       <span>Paper<em>Vault</em></span>
     </a>
-    <div class="crumb" id="crumb">All tools</div>
+    <div class="docname" id="docname">No document open</div>
     <div class="spacer"></div>
+    <button type="button" class="pick" data-act="open">Open PDF</button>
     <div class="local" title="Files are processed on this computer and never uploaded">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
       <span>Processed on this computer</span>
     </div>
   </header>
 
-  <nav class="side" aria-label="Tools" id="side">
-    <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Find a tool" aria-label="Find a tool"></label>
-    <div id="navlist"></div>
-  </nav>
-
-  <main class="main" id="main"></main>
+  <nav class="rail" aria-label="Tools" id="rail"></nav>
+  <main class="stage" id="stage"></main>
+  <aside class="inspector" id="inspector" aria-live="polite"></aside>
 
   <footer class="statusbar">
     <span class="dot" aria-hidden="true"></span>
@@ -163,11 +148,13 @@
     <span class="spacer"></span>
     <span>PaperVault · MIT licence</span>
   </footer>
+  <input type="file" id="picker" hidden>
 </div>
 
 <script>
 // Icons: 24px line icons drawn in the house style (stroke 1.7, round caps).
 const ICON = {
+  view: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   merge: '<path d="M4 4h9v13H4z"/><path d="M11 7h9v13h-9z"/>',
   split: '<path d="M4 6v12M20 6v12M4 12h16"/><path d="M9 9l3 3-3 3M15 9l-3 3 3 3"/>',
   extract: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/>',
@@ -183,11 +170,16 @@ const ICON = {
   imagesToPdf: '<rect x="3" y="4" width="11" height="12" rx="2"/><path d="M7 20h12a2 2 0 0 0 2-2V8"/><path d="m3 13 3-3 4 4"/>',
   text: '<path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
-  sun: '<circle cx="12" cy="12" r="4"/>',
+  open: '<path d="M12 4v11M7 9l5-5 5 5M5 20h14"/>',
+  back: '<path d="M15 6l-6 6 6 6"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
 };
 const svg = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.info}</svg>`;
 
-// Tools are grouped by the job they do. "extra" marks tools that need Poppler installed.
+// Tools are grouped by the job they do. Tools act on the open document unless "multi" is set.
+// "preview" tools show their text result in the stage. "extra" tools need Poppler installed.
 const GROUPS = [
   { title: "Organise", tools: [
     { id: "merge", icon: "merge", name: "Merge PDFs", desc: "Join several PDFs into one file.", accept: "application/pdf", multi: true, min: 2, fields: [] },
@@ -240,202 +232,329 @@ const TOOLS = GROUPS.flatMap((g) => g.tools.map((t) => ({ ...t, group: g.title }
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const size = (n) => (n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(0)} KB` : `${(n / 1048576).toFixed(1)} MB`);
-const main = document.getElementById("main");
-const crumb = document.getElementById("crumb");
-const navlist = document.getElementById("navlist");
-const query = document.getElementById("q");
+const isPdf = (f) => f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+const accepts = (f, accept) => (accept === "image/*" ? f.type.startsWith("image/") : isPdf(f));
 
-// Sidebar: every group with its tools. Filtering hides non-matching entries.
-function renderNav() {
-  navlist.innerHTML = GROUPS.map((g) => `
-    <div class="nav-group" data-group="${esc(g.title)}">
-      <div class="section-label">${esc(g.title)}</div>
-      ${g.tools.map((t) => `<a class="nav" href="#${t.id}" data-search="${esc((t.name + " " + t.desc).toLowerCase())}">${svg(t.icon)}<span>${esc(t.name)}</span></a>`).join("")}
-    </div>`).join("");
-  markCurrent();
+const $ = (id) => document.getElementById(id);
+const app = $("app"), rail = $("rail"), stage = $("stage"), inspector = $("inspector"), docname = $("docname"), picker = $("picker");
+
+// One state object drives every region. The open document lives here, so it survives tool changes.
+const state = {
+  doc: null,        // { file, url }: the open PDF and its blob URL
+  tool: null,       // the selected tool, or null for the plain viewer
+  queue: [],        // files for multi-file tools
+  values: {},       // option values per tool id
+  result: null,     // { name, blob, url, size } from the last run
+  text: "",         // text result shown in the stage
+  textId: 0,        // changes whenever text changes, so the stage knows to redraw
+  stage: "pdf",     // "pdf" or "text"
+  status: null,     // { text, err } message under the Run button
+  busy: false,
+};
+
+// Blob URLs are released as soon as the thing they point to is replaced.
+function setDoc(file) {
+  if (state.doc) URL.revokeObjectURL(state.doc.url);
+  state.doc = { file, url: URL.createObjectURL(new Blob([file], { type: "application/pdf" })) };
+  dropResult();
+  state.stage = "pdf";
+  state.status = null;
+  render();
 }
-function markCurrent() {
-  const id = location.hash.slice(1);
-  navlist.querySelectorAll("a.nav").forEach((a) => {
-    if (a.getAttribute("href") === `#${id}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
-  });
+function closeDoc() {
+  if (state.doc) URL.revokeObjectURL(state.doc.url);
+  state.doc = null;
+  dropResult();
+  state.stage = "pdf";
+  render();
 }
-query.addEventListener("input", () => {
-  const q = query.value.trim().toLowerCase();
-  navlist.querySelectorAll("a.nav").forEach((a) => { a.hidden = q !== "" && !a.dataset.search.includes(q); });
-  navlist.querySelectorAll(".nav-group").forEach((g) => { g.hidden = [...g.querySelectorAll("a.nav")].every((a) => a.hidden); });
+function dropResult() {
+  if (state.result) URL.revokeObjectURL(state.result.url);
+  state.result = null;
+}
+
+// Files arrive from the picker, the drop zone, or the empty state. Routing depends on the selected tool.
+function handleFiles(files, mode) {
+  const list = Array.from(files);
+  const tool = state.tool;
+  if (mode === "queue" && tool && tool.multi) {
+    const ok = list.filter((f) => accepts(f, tool.accept));
+    if (!ok.length) return showStatus(tool.accept === "image/*" ? "Pick image files for this tool." : "Pick PDF files for this tool.", true);
+    state.queue = state.queue.concat(ok);
+    dropResult();
+    state.status = null;
+    return render();
+  }
+  const pdf = list.find(isPdf);
+  if (!pdf) return showStatus("Only PDF files can be opened here.", true);
+  setDoc(pdf);
+}
+function showStatus(text, err) {
+  state.status = { text, err: !!err };
+  render();
+}
+function openPicker(mode) {
+  const tool = state.tool;
+  if (mode === "queue" && tool && tool.multi) {
+    picker.accept = tool.accept;
+    picker.multiple = true;
+  } else {
+    mode = "doc";
+    picker.accept = "application/pdf";
+    picker.multiple = false;
+  }
+  picker.dataset.mode = mode;
+  picker.value = "";
+  picker.click();
+}
+picker.addEventListener("change", () => handleFiles(picker.files, picker.dataset.mode));
+
+// Drop a file anywhere in the window.
+document.addEventListener("dragover", (e) => { e.preventDefault(); app.classList.add("dragging"); });
+document.addEventListener("dragleave", (e) => { if (!e.relatedTarget) app.classList.remove("dragging"); });
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  app.classList.remove("dragging");
+  handleFiles(e.dataTransfer.files, state.tool && state.tool.multi ? "queue" : "doc");
 });
 
-function renderHome() {
-  document.title = "PaperVault";
-  crumb.innerHTML = "<strong>All tools</strong>";
-  main.innerHTML = `
-    <div class="wrap">
-      <h1 class="title">Work with PDFs, privately</h1>
-      <p class="sub">Choose a tool to begin. Your files never leave this computer.</p>
-      <div class="hero">
-        <div class="i-big">${svg("info")}</div>
-        <div>
-          <h2>How it works</h2>
-          <p>Add your files, set the options, then download the result. Every step runs locally.</p>
-        </div>
-      </div>
-      ${GROUPS.map((g) => `
-        <section class="cat" aria-labelledby="cat-${esc(g.title)}">
-          <h3 id="cat-${esc(g.title)}">${esc(g.title)}</h3>
-          <div class="cards">
-            ${g.tools.map((t) => `
-              <a class="card" href="#${t.id}">
-                <span class="ic">${svg(t.icon)}</span>
-                <span><h4>${esc(t.name)}</h4><p>${esc(t.desc)}</p>${t.extra ? `<span class="badge">Needs Poppler</span>` : ""}</span>
-              </a>`).join("")}
-          </div>
-        </section>`).join("")}
-    </div>`;
+// Every button in the app is handled here.
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act;
+  if (act === "open") openPicker("doc");
+  else if (act === "add") openPicker("queue");
+  else if (act === "close") closeDoc();
+  else if (act === "run") run();
+  else if (act === "use-result") useResult();
+  else if (act === "back") { state.stage = "pdf"; render(); }
+  else if (act === "rm-queue") { state.queue.splice(Number(el.dataset.i), 1); dropResult(); render(); }
+});
+
+// Option values are stored as the user types, so re-rendering never loses them.
+const valueOf = (tool, f) => {
+  const saved = state.values[tool.id];
+  if (saved && f.key in saved) return saved[f.key];
+  return f.value ?? (f.options ? f.options[0][0] : "");
+};
+inspector.addEventListener("input", (e) => {
+  const key = e.target.dataset.key;
+  if (key && state.tool) (state.values[state.tool.id] ||= {})[key] = e.target.value;
+});
+inspector.addEventListener("change", (e) => {
+  const key = e.target.dataset.key;
+  if (key && state.tool) (state.values[state.tool.id] ||= {})[key] = e.target.value;
+});
+
+function canRun() {
+  const tool = state.tool;
+  if (!tool || state.busy) return false;
+  return tool.multi ? state.queue.length >= (tool.min || 1) : !!state.doc;
 }
 
-function renderTool(tool) {
-  document.title = `${tool.name} · PaperVault`;
-  crumb.innerHTML = `${esc(tool.group)} <span aria-hidden="true">/</span> <strong>${esc(tool.name)}</strong>`;
-  const fieldsHtml = tool.fields.map((f) => {
-    const id = `f-${f.key}`;
-    const input = f.type === "select"
-      ? `<select id="${id}">${f.options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`
-      : `<input id="${id}" type="${f.type}" value="${esc(f.value ?? "")}" placeholder="${esc(f.placeholder ?? "")}">`;
-    return `<label class="field" for="${id}"><span>${esc(f.label)}</span>${input}${f.help ? `<small>${esc(f.help)}</small>` : ""}</label>`;
-  }).join("");
-
-  main.innerHTML = `
-    <div class="wrap">
-      <a class="nav" href="#" style="width:auto;padding:0 6px 0 0;margin-bottom:10px;color:var(--accent)">← All tools</a>
-      <h1 class="title">${esc(tool.name)}</h1>
-      <p class="sub">${esc(tool.desc)}${tool.note ? ` ${esc(tool.note)}` : ""}</p>
-      <ol class="steps" aria-label="Progress">
-        <li class="now"><span class="n">1</span>Add files</li>
-        <li><span class="n">2</span>Set options</li>
-        <li><span class="n">3</span>Download</li>
-      </ol>
-      <div class="grid2">
-        <section class="panel" aria-labelledby="h-files">
-          <div class="panel-h"><span id="h-files">Files</span><small id="count"></small></div>
-          <label class="drop" id="drop">
-            <span class="i-big">${svg("merge")}</span>
-            <strong>Drop ${tool.multi ? "files" : "a file"} here</strong>
-            <span>or click to browse ${tool.accept === "image/*" ? "for images" : "for PDFs"}</span>
-            <input type="file" id="picker" accept="${tool.accept}" ${tool.multi ? "multiple" : ""}>
-          </label>
-          <table class="files" id="files" aria-live="polite" hidden>
-            <thead><tr><th>Name</th><th style="text-align:right">Size</th><th><span class="sr-only"></span></th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </section>
-        <section class="panel" aria-labelledby="h-opts">
-          <div class="panel-h"><span id="h-opts">Options</span></div>
-          <div class="panel-b">
-            ${tool.fields.length ? fieldsHtml : `<p class="sub" style="margin:0">No options for this tool.</p>`}
-            <div class="run">
-              <button class="primary" id="go" disabled>${esc(tool.name)}</button>
-              <div class="status" id="status" role="status"></div>
-            </div>
-          </div>
-        </section>
-      </div>
-      <pre class="preview" id="preview" hidden></pre>
-    </div>`;
-
-  let files = [];
-  const picker = document.getElementById("picker");
-  const drop = document.getElementById("drop");
-  const go = document.getElementById("go");
-  const status = document.getElementById("status");
-  const table = document.getElementById("files");
-
-  const refresh = () => {
-    const body = table.querySelector("tbody");
-    table.hidden = files.length === 0;
-    body.innerHTML = files.map((f, i) => `
-      <tr>
-        <td><div class="nm">${svg("extract")}<span>${esc(f.name)}</span></div></td>
-        <td class="num">${size(f.size)}</td>
-        <td style="width:40px"><button class="rm" data-i="${i}" aria-label="Remove ${esc(f.name)}">${svg("delete")}</button></td>
-      </tr>`).join("");
-    document.getElementById("count").textContent = files.length ? `${files.length} file${files.length > 1 ? "s" : ""}` : "";
-    go.disabled = files.length < (tool.min || 1);
-    status.className = "status";
-    status.textContent = tool.min && files.length && files.length < tool.min ? `Add at least ${tool.min} files.` : "";
-    document.querySelectorAll(".steps li").forEach((li, i) => {
-      li.className = i === 0 && files.length === 0 ? "now" : i === 0 ? "done" : i === 1 && files.length ? "now" : "";
-    });
-  };
-  const setFiles = (list) => {
-    const picked = Array.from(list);
-    files = tool.multi ? files.concat(picked) : picked.slice(0, 1);
-    refresh();
-  };
-
-  picker.addEventListener("change", () => setFiles(picker.files));
-  drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
-  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
-  drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); setFiles(e.dataTransfer.files); });
-  table.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-i]");
-    if (btn) { files.splice(Number(btn.dataset.i), 1); refresh(); }
-  });
-
-  go.addEventListener("click", async () => {
-    const form = new FormData();
-    files.forEach((f) => form.append("file", f, f.name));
-    for (const f of tool.fields) {
-      const value = document.getElementById(`f-${f.key}`).value.trim();
-      if (f.key === "level") {
-        const [max_side, quality] = value.split(":");
-        form.append("max_side", max_side); form.append("quality", quality);
-      } else if (value !== "") {
-        form.append(f.key, value);
-      }
+async function run() {
+  const tool = state.tool;
+  if (!canRun()) return;
+  const form = new FormData();
+  const files = tool.multi ? state.queue : [state.doc.file];
+  files.forEach((f) => form.append("file", f, f.name));
+  for (const f of tool.fields) {
+    const value = String(valueOf(tool, f)).trim();
+    if (f.key === "level") {
+      const [max_side, quality] = value.split(":");
+      form.append("max_side", max_side); form.append("quality", quality);
+    } else if (value !== "") {
+      form.append(f.key, value);
     }
-    go.disabled = true;
-    status.className = "status"; status.textContent = "Working…";
-    document.getElementById("preview").hidden = true;
-    try {
-      const res = await fetch(`/api/run/${tool.id}`, { method: "POST", body: form });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || `Something went wrong (${res.status}).`);
-      }
-      const blob = await res.blob();
-      const name = /filename="([^"]+)"/.exec(res.headers.get("Content-Disposition") || "")?.[1] || "result";
-      const url = URL.createObjectURL(blob);
-      status.className = "status";
-      status.innerHTML = `<div class="result">
-        <div class="ok">${svg("info")} Done. ${size(blob.size)} ready.</div>
-        <div class="fname">${esc(name)}</div>
-        <a class="btn" href="${url}" download="${esc(name)}">Download ${esc(name)}</a>
+  }
+  state.busy = true;
+  state.status = { text: "Working…", err: false };
+  render();
+  try {
+    const res = await fetch(`/api/run/${tool.id}`, { method: "POST", body: form });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Something went wrong (${res.status}).`);
+    }
+    const blob = await res.blob();
+    const name = /filename="([^"]+)"/.exec(res.headers.get("Content-Disposition") || "")?.[1] || "result";
+    dropResult();
+    state.result = { name, blob, size: blob.size, url: URL.createObjectURL(blob) };
+    state.status = { text: "Done.", err: false };
+    if (tool.preview) {
+      state.text = await blob.text();
+      state.textId++;
+      state.stage = "text";
+    }
+  } catch (err) {
+    state.status = { text: err.message, err: true };
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+
+// A PDF result becomes the open document, so tools can be chained: rotate, then compress, and so on.
+function useResult() {
+  const r = state.result;
+  if (!r) return;
+  setDoc(new File([r.blob], r.name, { type: "application/pdf" }));
+}
+
+// Rail: the viewer, then every tool. Built once so the search box keeps its text.
+function buildRail() {
+  rail.innerHTML = `
+    <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Find a tool" aria-label="Find a tool"></label>
+    <div class="section-label">Read</div>
+    <a class="nav" href="#" data-id="">${svg("view")}<span>Viewer</span></a>
+    ${GROUPS.map((g) => `
+      <div class="nav-group">
+        <div class="section-label">${esc(g.title)}</div>
+        ${g.tools.map((t) => `<a class="nav" href="#${t.id}" data-id="${t.id}" data-search="${esc((t.name + " " + t.desc).toLowerCase())}">${svg(t.icon)}<span>${esc(t.name)}</span></a>`).join("")}
+      </div>`).join("")}`;
+  $("q").addEventListener("input", (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    rail.querySelectorAll("a.nav[data-search]").forEach((a) => { a.hidden = q !== "" && !a.dataset.search.includes(q); });
+    rail.querySelectorAll(".nav-group").forEach((g) => { g.hidden = [...g.querySelectorAll("a.nav")].every((a) => a.hidden); });
+  });
+}
+function markRail() {
+  const current = state.tool ? state.tool.id : "";
+  rail.querySelectorAll("a.nav[data-id]").forEach((a) => {
+    if (a.dataset.id === current) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+}
+
+// The stage is only redrawn when what it shows changes. Redrawing the PDF object would reload the file.
+let stageKey = "";
+function renderStage() {
+  const key = `${state.stage}|${state.doc ? state.doc.url : ""}|${state.textId}`;
+  if (key === stageKey) return;
+  stageKey = key;
+  if (state.stage === "text") {
+    stage.innerHTML = `
+      <div class="textview">
+        <div class="tv-bar"><span>Text result</span><button type="button" class="pick" data-act="back">${svg("back")} Back to document</button></div>
+        <pre class="tv-text">${esc(state.text)}</pre>
       </div>`;
-      if (tool.preview) {
-        const pre = document.getElementById("preview");
-        pre.textContent = await blob.text();
-        pre.hidden = false;
-      }
-    } catch (err) {
-      status.className = "status err";
-      status.textContent = err.message;
-    } finally {
-      go.disabled = files.length < (tool.min || 1);
-    }
-  });
-  refresh();
+  } else if (state.doc) {
+    const name = esc(state.doc.file.name);
+    stage.innerHTML = `
+      <object class="pdf-view" data="${state.doc.url}#toolbar=1" type="application/pdf" aria-label="${name}">
+        <div class="pdf-fallback">This browser cannot show PDFs here. <a href="${state.doc.url}" download="${name}">Download ${name}</a> and open it in a PDF reader.</div>
+      </object>`;
+  } else {
+    stage.innerHTML = `
+      <div class="empty-drop">
+        <span class="big-icon">${svg("view")}</span>
+        <h2>Open a PDF</h2>
+        <p>Drop a file anywhere on this page, or choose one. It is shown here and never uploaded.</p>
+        <button type="button" class="primary" data-act="open" style="width:auto;padding:0 22px">Choose a PDF</button>
+      </div>`;
+  }
 }
 
+function fieldHtml(tool, f) {
+  const v = valueOf(tool, f);
+  const input = f.type === "select"
+    ? `<select data-key="${f.key}">${f.options.map(([val, label]) => `<option value="${esc(val)}"${String(val) === String(v) ? " selected" : ""}>${esc(label)}</option>`).join("")}</select>`
+    : `<input data-key="${f.key}" type="${f.type}" value="${esc(v)}" placeholder="${esc(f.placeholder ?? "")}">`;
+  return `<label class="field"><span>${esc(f.label)}</span>${input}${f.help ? `<small>${esc(f.help)}</small>` : ""}</label>`;
+}
+
+function renderInspector() {
+  const tool = state.tool;
+  if (!tool) {
+    inspector.innerHTML = `
+      <div class="ins-h">
+        <div class="kicker">Document</div>
+        <h2>${state.doc ? esc(state.doc.file.name) : "Nothing open"}</h2>
+        <p>${state.doc ? size(state.doc.file.size) + ". Choose a tool on the left to work on it. Results open back here." : "Open a PDF to read it. Then choose a tool on the left to change it."}</p>
+      </div>
+      <div class="ins-sec">
+        ${state.doc
+          ? `<button type="button" class="ghost-block" data-act="open">${svg("open")} Open another PDF</button>
+             <button type="button" class="ghost-block" data-act="close">${svg("close")} Close document</button>`
+          : `<button type="button" class="primary" data-act="open">Choose a PDF</button>`}
+      </div>`;
+    return;
+  }
+
+  let input;
+  if (tool.multi) {
+    const rows = state.queue.map((f, i) => `
+      <div class="item">${svg("extract")}<span>${esc(f.name)}</span>
+        <button type="button" class="rm" data-act="rm-queue" data-i="${i}" aria-label="Remove ${esc(f.name)}">${svg("delete")}</button></div>`).join("");
+    input = `
+      ${rows || `<p>No files yet. Add ${tool.accept === "image/*" ? "images" : "PDFs"} to start.</p>`}
+      <button type="button" class="ghost-block" data-act="add">${svg("open")} Add ${tool.accept === "image/*" ? "images" : "PDFs"}</button>
+      ${tool.min && state.queue.length < tool.min ? `<p style="margin-top:8px;font-size:12.5px">Add at least ${tool.min} files.</p>` : ""}`;
+  } else {
+    input = state.doc
+      ? `<div class="item">${svg("extract")}<span>${esc(state.doc.file.name)}</span></div>
+         <p style="font-size:12.5px">This tool works on the open document.</p>`
+      : `<p>Open a PDF first. This tool works on the open document.</p>
+         <button type="button" class="ghost-block" data-act="open">${svg("open")} Open a PDF</button>`;
+  }
+
+  const fields = tool.fields.length
+    ? tool.fields.map((f) => fieldHtml(tool, f)).join("")
+    : `<p style="margin:0">No options for this tool.</p>`;
+
+  const r = state.result;
+  const result = r ? `
+    <section class="ins-sec">
+      <h3>Result</h3>
+      <div class="result">
+        <div class="ok">${svg("check")} Ready · ${size(r.size)}</div>
+        <div class="fname">${esc(r.name)}</div>
+        <a class="btn" href="${r.url}" download="${esc(r.name)}">${svg("download")} Download</a>
+        ${/\.pdf$/i.test(r.name) ? `<button type="button" class="ghost-block" data-act="use-result" style="margin-top:0">${svg("view")} Open result in viewer</button>` : ""}
+      </div>
+    </section>` : "";
+
+  const status = state.status ? `<div class="status ${state.status.err ? "err" : ""}" role="status">${esc(state.status.text)}</div>` : "";
+
+  inspector.innerHTML = `
+    <div class="ins-h">
+      <div class="kicker">${esc(tool.group)}</div>
+      <h2>${esc(tool.name)}</h2>
+      <p>${esc(tool.desc)}${tool.note ? ` ${esc(tool.note)}` : ""}</p>
+    </div>
+    <section class="ins-sec"><h3>${tool.multi ? "Files" : "Input"}</h3>${input}</section>
+    <section class="ins-sec"><h3>Options</h3>${fields}</section>
+    <section class="ins-sec">
+      <button type="button" class="primary" data-act="run" ${canRun() ? "" : "disabled"}>${esc(tool.name)}</button>
+      ${status}
+    </section>
+    ${result}`;
+}
+
+function render() {
+  const tool = state.tool;
+  document.title = state.doc ? `${state.doc.file.name} · PaperVault` : tool ? `${tool.name} · PaperVault` : "PaperVault";
+  docname.innerHTML = state.doc ? `<strong>${esc(state.doc.file.name)}</strong>` : "No document open";
+  markRail();
+  renderStage();
+  renderInspector();
+}
+
+// The URL hash picks the tool. No hash is the viewer.
 function route() {
-  const id = location.hash.slice(1);
-  const tool = TOOLS.find((t) => t.id === id);
-  if (tool) renderTool(tool); else renderHome();
-  markCurrent();
-  main.scrollTop = 0;
+  const id = decodeURIComponent(location.hash.slice(1));
+  const next = TOOLS.find((t) => t.id === id) || null;
+  if (next !== state.tool) {
+    state.tool = next;
+    state.queue = [];
+    dropResult();
+    state.status = null;
+    state.stage = "pdf";
+  }
+  render();
 }
 window.addEventListener("hashchange", route);
-renderNav();
+buildRail();
 route();
 </script>
 </body>
